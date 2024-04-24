@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('email');
             $table->string('phone_no');
+            $table->string('applied_from')->nullable();
             $table->unsignedBigInteger('country_id');
             $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
             $table->unsignedBigInteger('university_id');
@@ -39,6 +40,8 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('student_details');
+        Schema::table('student_details', function (Blueprint $table) {
+            $table->dropColumn('applied_from');
+        });
     }
 };

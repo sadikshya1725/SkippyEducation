@@ -30,6 +30,7 @@ class StudentDetailController extends Controller
             'name' => 'required',
             'email' => 'required|email',
             'phone_no' => 'required',
+            'applied_from' => 'nullable|string',
             'country_id' => 'required|exists:countries,id',
             'university_id' => 'required|exists:universities,id',
             'course_id' => 'required|exists:courses,id',
@@ -67,6 +68,7 @@ class StudentDetailController extends Controller
             $studentdetail->image = $newImage;
             $studentdetail->name = $request->name;
             $studentdetail->email = $request->email;
+            $studentdetail->applied_from = $request->applied_from;
             $studentdetail->phone_no = $request->phone_no;
             $studentdetail->country_id = $request->country_id;
             $studentdetail->university_id = $request->university_id;
@@ -85,91 +87,83 @@ class StudentDetailController extends Controller
     }
 
     public function edit($id)
-    {
-        $studentDetail = StudentDetail::findOrFail($id);
-        $countries = Country::all();
-        $universities = University::all();
-        $courses = Course::all();
-        return view('backend.studentdetail.update', [
-            'studentDetail' => $studentDetail,
-            'countries' => $countries,
-            'universities' => $universities,
-            'courses' => $courses,
-            'page_title' => 'Edit Student Details'
-        ]);
-    }
-    public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'phone_no' => 'required',
-            'country_id' => 'required|exists:countries,id',
-            'university_id' => 'required|exists:universities,id',
-            'course_id' => 'required|exists:courses,id',
-            'intake_month_year' => 'required|date',
-            'image' => 'nullable|image',
-            'documents' => 'nullable|array',
-            'documents.*' => 'file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
-        ]);
+{
+    $studentDetail = StudentDetail::findOrFail($id);
+    $countries = Country::all();
+    $universities = University::all();
+    $courses = Course::all();
 
-        $studentDetail = StudentDetail::findOrFail($id);
+    // Assuming $appliedFromOptions is the same as your previous implementation
+    $appliedFromOptions = ['Sydney', 'Perth', 'Nepal'];
 
-        try {
-            if ($request->hasFile('image')) {
-                $oldImage = public_path('uploads/students_detail/image/' . $studentDetail->image);
-                if (file_exists($oldImage) && $studentDetail->image != 'NoImage') {
-                    unlink($oldImage);
-                }
+    return view('backend.studentdetail.update', [
+        'studentDetail' => $studentDetail,
+        'countries' => $countries,
+        'universities' => $universities,
+        'courses' => $courses,
+        'appliedFromOptions' => $appliedFromOptions, 
+        'selectedAppliedFrom' => $studentDetail->applied_from, 
+        'page_title' => 'Edit Student Details'
+    ]);
+}
 
-                $newImageName = time() . '.' . $request->image->getClientOriginalExtension();
-                $request->image->move(public_path('uploads/students_detail/image'), $newImageName);
-                $studentDetail->image = $newImageName;
-            }
+public function update(Request $request, $id)
+{
+    $validated = $request->validate([
+        'name' => 'required',
+        'email' => 'required|email',
+        'applied_from' => 'required|string', 
+        'phone_no' => 'required',
+        'country_id' => 'required|exists:countries,id',
+        'university_id' => 'required|exists:universities,id',
+        'course_id' => 'required|exists:courses,id',
+        'intake_month_year' => 'required|date',
+        'image' => 'nullable|image',
+        'documents' => 'nullable|array',
+        'documents.*' => 'file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
+    ]);
 
-            // Handling document uploads
-            // $documentPaths = json_decode($studentDetail->documents, true) ?: [];
-            $documentPaths = [];
-            if ($request->hasFile('documents')) {
-                foreach ($request->file('documents') as $document) {
-                    $fileName = time() . '-' . uniqid() . '.' . $document->getClientOriginalExtension();
-                    $targetDirectory = 'uploads/students_detail/file';
-                    $absoluteDirectory = public_path($targetDirectory);
-                    if (!file_exists($absoluteDirectory)) {
-                        mkdir($absoluteDirectory, 0777, true);
-                    }
-                    $document->move($absoluteDirectory, $fileName);
-                    $documentPaths[] = asset($targetDirectory . '/' . $fileName);
-                }
-            }
-            //clear existing file
-            $existingDocuments = json_decode($studentDetail->documents, true);
-            if (is_array($existingDocuments)) {
-                foreach ($existingDocuments as $existingDocument) {
-                    $existingDocumentPath = public_path(str_replace(asset(''), '', $existingDocument));
-                    if (file_exists($existingDocumentPath)) {
-                        unlink($existingDocumentPath);
-                    }
-                }
-            }
-            // Updating student details
-            $studentDetail->update([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'phone_no' => $validated['phone_no'],
-                'country_id' => $validated['country_id'],
-                'university_id' => $validated['university_id'],
-                'course_id' => $validated['course_id'],
-                'intake_month_year' => $validated['intake_month_year'],
-                'documents' => json_encode($documentPaths),
-                // 'image' is already set above
-            ]);
+    $studentDetail = StudentDetail::findOrFail($id);
 
-            return redirect()->route('admin.student-details.index')->with('success', 'Student Details updated successfully.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error updating student details: ' . $e->getMessage());
+    try {
+        if ($request->hasFile('image')) {
+            // Handle image update
+            $newImageName = time() . '.' . $request->image->getClientOriginalExtension();
+            $request->image->move(public_path('uploads/students_detail/image'), $newImageName);
+            $studentDetail->image = $newImageName;
         }
+
+        // Handle document uploads
+        $documentPaths = [];
+        if ($request->hasFile('documents')) {
+            foreach ($request->file('documents') as $document) {
+                $fileName = time() . '-' . uniqid() . '.' . $document->getClientOriginalExtension();
+                $document->move(public_path('uploads/students_detail/file'), $fileName);
+                $documentPaths[] = asset('uploads/students_detail/file/' . $fileName);
+            }
+            // Update documents attribute
+            $studentDetail->documents = json_encode($documentPaths);
+        }
+
+        // Update remaining attributes
+        $studentDetail->name = $validated['name'];
+        $studentDetail->email = $validated['email'];
+        $studentDetail->applied_from = $validated['applied_from'];
+        $studentDetail->phone_no = $validated['phone_no'];
+        $studentDetail->country_id = $validated['country_id'];
+        $studentDetail->university_id = $validated['university_id'];
+        $studentDetail->course_id = $validated['course_id'];
+        $studentDetail->intake_month_year = $validated['intake_month_year'];
+
+        // Save updated student detail
+        $studentDetail->save();
+
+        return redirect()->route('admin.student-details.index')->with('success', 'Student Details updated successfully.');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Error updating student details: ' . $e->getMessage());
     }
+}
+
 
     public function destroy($id)
     {

@@ -60,6 +60,15 @@
                 </select>
             </div>
             <div class="form-group">
+                <label for="applied_from">Applied From</label>
+                <select name="applied_from" class="form-control" id="applied_from">
+                    <option value="">Applied From</option>
+                    <option value="sydney">Sydney</option>
+                    <option value="perth">Perth</option>
+                    <option value="nepal">Nepal</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="university_id">University</label>
                 <select name="university_id" class="form-control" id="university_id" required>
                     <option value="">Select University</option>
@@ -82,7 +91,6 @@
                 <input type="date" name="intake_month_year" class="form-control" id="intake_month_year"
                     placeholder="MM/YYYY" required>
             </div>
-
 
             <div class="form-group">
                 <label for="image">Image</label>

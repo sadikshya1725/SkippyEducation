@@ -48,6 +48,7 @@
                 <th>University</th>
                 <th>Course</th>
                 <th>Intake Date</th>
+                <th>Applied From</th>
                 <th>Image</th>
                 <th>Documents</th>
                 <th>Action</th>
@@ -64,6 +65,7 @@
                     <td>{{ $studentDetail->university->title ?? 'No University' }}</td>
                     <td>{{ $studentDetail->course->title ?? 'No Course' }}</td>
                     <td>{{ $studentDetail->intake_month_year ?? '' }}</td>
+                    <td>{{ $studentDetail->applied_from ?? 'No City' }}</td> 
                     <td>
                         <img id="preview{{ $loop->iteration }}"
                             src="{{ asset('uploads/students_detail/image/' . $studentDetail->image) }}"

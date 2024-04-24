@@ -69,6 +69,24 @@
                     @endforeach
                 </select>
             </div>
+
+            <div class="form-group">
+                <label for="applied_from">Applied From</label>
+                <div id="appliedFromContainer">
+                    <select id="applied_from" name="applied_from">
+                        @foreach($appliedFromOptions as $option)
+                            <option value="{{ $option }}" {{ $selectedAppliedFrom == $option ? 'selected' : '' }}>{{ $option }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            
+            
+           
+            
+
+
+            
             <!-- University -->
             <div class="form-group">
                 <label for="university_id">University</label>
