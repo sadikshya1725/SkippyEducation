@@ -188,6 +188,8 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
+        Yajra\DataTables\DataTablesServiceProvider::class,
+
 
 
 
@@ -227,6 +229,8 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
         'ReCaptcha' => Biscolab\ReCaptcha\Facades\ReCaptcha::class,        
         'Image' => Intervention\Image\Facades\Image::class,
+        'DataTables' => Yajra\DataTables\Facades\DataTables::class,
+
 
 
 

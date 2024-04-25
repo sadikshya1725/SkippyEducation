@@ -147,6 +147,19 @@
                                     </a>
                                 </li>
                             @endcan
+
+                            
+                            {{-- Student Form --}}
+                            @can('list_contacts')
+                                <li class="nav-item">
+                                    <a class="nav-link {{ Request::segment(2) == 'contact-details' && Request::segment(3) == 'contacts' ? 'active' : '' }}"
+                                        href="{{ route('admin.student-forms.index') }}">
+                                        <div class="d-flex align-items-center"><i class="fa fa-angle-double-right"></i>
+                                           Student Form
+                                        </div>
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
                     </li>
                     </li>

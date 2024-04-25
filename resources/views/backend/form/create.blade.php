@@ -4,8 +4,21 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">{{ __('Student Form') }}</div>
+                {{-- <div class="card"> --}}
+                    {{-- <div class="card-header">{{ __('Student Form') }}</div> --}}
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1 class="m-0">{{ $page_title }}</h1>
+                            <a href="{{ url('admin') }}"><button class="btn btn-primary btn-sm"><i class="fa fa-arrow-left"></i>
+                                    Back</button></a>
+                        </div><!-- /.col -->
+                        <div class="col-sm-6">
+                            <ol class="breadcrumb float-sm-right">
+                                <li class="breadcrumb-item"><a href="{{ url('admin') }}">Home</a></li>
+                                <li class="breadcrumb-item active">Dashboard v1</li>
+                            </ol>
+                        </div>
+                    </div>
 
                     <div class="card-body">
                         <form method="POST" action="{{ route('admin.student-forms.store') }}">
@@ -90,8 +103,8 @@
 
                             <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
                         </form>
-                    </div>
-                </div>
+                     </div>
+                {{-- </div> --}}
             </div>
         </div>
     </div>

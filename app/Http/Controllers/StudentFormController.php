@@ -4,18 +4,36 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\StudentForm;
+use Yajra\DataTables\Facades\DataTables;
 
 class StudentFormController extends Controller
 {
-    public function index()
+    public function index(Request $request) 
     {
-        $studentForms = StudentForm::all();
-        return view('backend.form.index', ['studentForms' => $studentForms]);
+        
+            if ($request->ajax()) {
+                $data = StudentForm::latest()->get();
+                return DataTables::of($data)
+                    ->addColumn('actions', function($studentForm) {
+                        return '<a href="' . route('admin.student-forms.edit', $studentForm->id) . '" class="btn btn-info btn-sm">Edit</a>
+                                <form action="' . route('admin.student-forms.destroy', $studentForm->id) . '" method="POST">
+                                    ' . csrf_field() . '
+                                    ' . method_field('DELETE') . '
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Are you sure you want to delete this user?\')">Delete</button>
+                                </form>';
+                    })
+                    ->rawColumns(['actions'])
+                    ->make(true);
+            }
+        
+            return view('backend.form.index');
+        
+        
     }
 
     public function create()
     {
-        return view('backend.form.create');
+        return view('backend.form.create',['page_title' => 'Add Form']);
     }
 
     public function store(Request $request)
@@ -50,7 +68,7 @@ class StudentFormController extends Controller
     public function edit($id)
     {
         $studentForm = StudentForm::findOrFail($id);
-        return view('backend.form.update', ['studentForm' => $studentForm]);
+        return view('backend.form.update', ['studentForm' => $studentForm,'page_title' => 'Update Form']);
     }
 
     public function update(Request $request, $id)
