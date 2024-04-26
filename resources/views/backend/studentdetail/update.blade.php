@@ -73,7 +73,7 @@
             <div class="form-group">
                 <label for="applied_from">Applied From</label>
                 <div id="appliedFromContainer">
-                    <select id="applied_from" name="applied_from">
+                    <select id="applied_from" name="applied_from" class="form-control" >
                         @foreach($appliedFromOptions as $option)
                             <option value="{{ $option }}" {{ $selectedAppliedFrom == $option ? 'selected' : '' }}>{{ $option }}</option>
                         @endforeach

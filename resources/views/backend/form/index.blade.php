@@ -13,7 +13,7 @@
             <div>
                 <h1>Student Form</h1>
                 <div class="lead">
-                    <a href="{{ route('admin.student-forms.create') }}" class="btn btn-primary btn-sm">Add new category</a>
+                    <a href="{{ route('admin.student-forms.create') }}" class="btn btn-primary btn-sm">Add</a>
                 </div>
             </div>
         </div>
